@@ -1,16 +1,12 @@
 <!--
-
-DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE Version 2, December 2004
-
-Copyright (C) 2013 Christian Becher / phaziz.com
-Everyone is permitted to copy and distribute verbatim or modified copies of this license document, and changing it is allowed as long as the name is changed.
-
-DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
-
-You just DO WHAT THE FUCK YOU WANT TO.
-
-2020-05-28
-
+	DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE Version 2, December 2004
+	Copyright (C) 2021 Christian Becher / https://phaziz.github.io
+	Everyone is permitted to copy and distribute verbatim or modified 
+	copies of this license document, 
+	and changing it is allowed as long as the name is changed.
+	DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE TERMS AND CONDITIONS FOR COPYING, 
+	DISTRIBUTION AND MODIFICATION
+	You just DO WHAT THE FUCK YOU WANT TO.
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -69,11 +65,15 @@ You just DO WHAT THE FUCK YOU WANT TO.
 	</style>
 
 	<script>
+		let fieldHeight = 15;
+		let fieldWidth = 30;
 		let barHeight = 5; // must be uneven for centerpoint
 		let barWidth = 1;
 		let speed = 500; 
 		let x = 0;
 		let y = 0;
+		let playerPoints = 0;
+		let computerPoints = 0;
 		let ballArea = [0, 0, 0, 0];
 		let virtualBallArea = [0, 0, 0, 0];
 		let ballStartPositionX = 0;
@@ -95,7 +95,20 @@ You just DO WHAT THE FUCK YOU WANT TO.
 		let computerBarEndPositionX = 0;
 		let computerBarEndPositionY = 0;
 
-		let moveBallDownLeft = () => {
+		let isPlayersBar = () => {
+			console.log(ballArea);
+			console.log(playerBarArea);
+
+			if(playerBarArea[0] <= ballArea[0] && playerBarArea[2] >= ballArea[2]){
+				return true;
+			} else {
+				computerPoints++;
+
+				return false;
+			}
+		}
+
+		let moveBallDownLeft = (fieldHeight, fieldWidth) => {
 			setTimeout(() => {
 				ballMovementPositionX = ballStartPositionX;
 				ballMovementPositionY = (ballStartPositionY - 1)
@@ -113,7 +126,7 @@ You just DO WHAT THE FUCK YOU WANT TO.
 				ballEndPositionX++;
 				ballEndPositionY--;
 
-				ballArea = [ballStartPositionX, ballStartPositionY, ballEndPositionX, ballEndPositionY];
+				ballArea = [ballStartPositionX, (ballStartPositionY - 1), ballEndPositionX, (ballEndPositionY - 1)];
 				virtualBallArea = ballArea;
 
 				ballMovementPositionX = ballMovementPositionX - 1;
@@ -137,8 +150,18 @@ You just DO WHAT THE FUCK YOU WANT TO.
 				new_2_2.style.backgroundColor = '#ff0066';
 				new_2_2.className = 'cell ball';
 
-				if (ballMovementPositionY > 1){
-					moveBallDownLeft();
+				if (ballMovementPositionY === 1) {
+					if(true === isPlayersBar()){
+						// Ball abschießen
+					} else {
+						console.log('Player: ' + playerPoints + ' :: Computer: ' + computerPoints);
+						resetBall();
+						return false;
+					}						
+				} else {
+					if (ballMovementPositionY > 0) {
+						moveBallDownLeft(fieldHeight, fieldWidth);
+					}
 				}
 			}, speed)
 		}
@@ -151,9 +174,9 @@ You just DO WHAT THE FUCK YOU WANT TO.
 			}
 		}
 
-		let syncPhysicalPlayerBarArea = (x, y, upOrDown) => {
+		let syncPhysicalPlayerBarArea = (fieldHeight, fieldWidth, upOrDown) => {
 			if('down' === upOrDown){
-				for (var i = 0; i <= x; i++){
+				for (var i = 0; i <= fieldHeight; i++){
 					document.getElementById('cell_' + i + '_0').style.backgroundColor = '#fff';
 					document.getElementById('cell_' + i + '_0').className = 'cell';
 				}
@@ -166,7 +189,7 @@ You just DO WHAT THE FUCK YOU WANT TO.
 					document.getElementById('cell_' + i + '_0').className = 'cell playerBar';
 				}
 			} else {
-				for (var i = 0; i <= x; i++){
+				for (var i = 0; i <= fieldHeight; i++){
 					document.getElementById('cell_' + i + '_0').style.backgroundColor = '#fff';
 					document.getElementById('cell_' + i + '_0').className = 'cell';
 				}
@@ -181,7 +204,7 @@ You just DO WHAT THE FUCK YOU WANT TO.
 			}
 		}
 
-		let checkPlayerBarAreaSync = (x, y) => {
+		let checkPlayerBarAreaSync = () => {
 			if(playerBarArea === virtualPlayerBarArea){
 				console.log('Player bar area is synced');
 			} else {
@@ -213,15 +236,15 @@ You just DO WHAT THE FUCK YOU WANT TO.
 			virtualComputerBarArea = newComputerArea;
 		}
 
-		let movePlayerBar = (pressedKey, x, y) => {
+		let movePlayerBar = (pressedKey, fieldHeight, fieldWidth) => {
 			let maxTopPosition = 0;
-			let maxBottomPosition = y;
+			let maxBottomPosition = fieldWidth;
 
 			if('ArrowDown' === pressedKey){
-				if(playerBarArea[2] < x){
+				if(playerBarArea[2] < fieldHeight){
 					console.log('downwards');
 
-					syncPhysicalPlayerBarArea(x, y, 'down');
+					syncPhysicalPlayerBarArea(fieldHeight, fieldWidth, 'down');
 				} else {
 					document.getElementById('cell_' + playerBarArea[2] + '_' + playerBarArea[3]).style.backgroundColor = '#ff0066';
 					setTimeout(() => {document.getElementById('cell_' + playerBarArea[2] + '_' + playerBarArea[3]).style.backgroundColor = '#000';}, 250);
@@ -232,7 +255,7 @@ You just DO WHAT THE FUCK YOU WANT TO.
 				if(playerBarArea[0] > 0){
 					console.log('upwards');
 
-					syncPhysicalPlayerBarArea(x, y, 'up');
+					syncPhysicalPlayerBarArea(fieldHeight, fieldWidth, 'up');
 				} else {
 					document.getElementById('cell_' + playerBarArea[0] + '_' + playerBarArea[1]).style.backgroundColor = '#ff0066';
 					setTimeout(() => {document.getElementById('cell_' + playerBarArea[0] + '_' + playerBarArea[1]).style.backgroundColor = '#000';}, 250);
@@ -240,9 +263,9 @@ You just DO WHAT THE FUCK YOU WANT TO.
 			}
 		}
 
-		let setBall = (x, y) => {
+		let setBall = (fieldHeight, fieldWidth) => {
 			let ballPositionX = 0;
-			let ballPositionY = ((y / 2) - 1);
+			let ballPositionY = ((fieldWidth / 2) - 1);
 
 			let start_1_1 = document.getElementById('cell_' + ballPositionX + '_' + ballPositionY);
 			let start_1_2 = document.getElementById('cell_' + ballPositionX + '_' + (ballPositionY + 1));
@@ -262,16 +285,41 @@ You just DO WHAT THE FUCK YOU WANT TO.
 			start_2_2.className = 'cell ball';
 
 			ballStartPositionX = 0;
-			ballStartPositionY = y / 2;
+			ballStartPositionY = fieldWidth / 2;
 			ballEndPositionX = 1;
-			ballEndPositionY = ((y / 2) + 1);
+			ballEndPositionY = ((fieldWidth / 2) + 1);
 			ballArea = [ballStartPositionX, ballStartPositionY, ballEndPositionX, ballEndPositionY];
 			virtualBallArea = ballArea;
 
 			console.log('Ball area: ' + ballArea)
 		}
 
-		let setBars = (x, y) => {
+		let resetBall = () => {
+			ballArea = [++ballArea[0], --ballArea[1], ++ballArea[2], --ballArea[3]];
+
+			console.log('ballArea: ' + ballArea);
+
+			let act_1_1 = document.getElementById('cell_' + 14 + '_' + 0);
+			let act_1_2 = document.getElementById('cell_' + 14 + '_' + 1);
+			let act_2_1 = document.getElementById('cell_' + 15 + '_' + 0);
+			let act_2_2 = document.getElementById('cell_' + 15 + '_' + 1);
+
+			act_1_1.style.backgroundColor = '#fff';
+			act_1_1.className = 'cell';
+
+			act_1_2.style.backgroundColor = '#fff';
+			act_1_2.className = 'cell';
+
+			act_2_1.style.backgroundColor = '#fff';
+			act_2_1.className = 'cell';
+
+			act_2_2.style.backgroundColor = '#fff';
+			act_2_2.className = 'cell';
+
+			
+		}
+
+		let setBars = (fieldHeight, fieldWidth) => {
 			var playerBarArea = null;
 			var computerBarArea = null;
 
@@ -290,7 +338,7 @@ You just DO WHAT THE FUCK YOU WANT TO.
 			playerBarEndPositionY = 0;
 			playerBarArea = [playerBarStartPositionX, playerBarStartPositionY, playerBarEndPositionX, playerBarEndPositionY];
 			syncVirtalPlayerBarArea(playerBarArea);
-			checkPlayerBarAreaSync(x, y);
+			checkPlayerBarAreaSync(fieldHeight, fieldWidth);
 
 			console.log('Player bar is ready');
 			console.log('Player bar area: ' + playerBarArea);
@@ -302,40 +350,42 @@ You just DO WHAT THE FUCK YOU WANT TO.
 			}
 
 			computerBarStartPositionX = 0;
-			computerBarStartPositionY = y;
+			computerBarStartPositionY = fieldWidth;
 			computerBarEndPositionX = barHeight;
-			computerBarEndPositionY = y;
+			computerBarEndPositionY = fieldWidth;
 			computerBarArea = [computerBarStartPositionX, computerBarStartPositionY, computerBarEndPositionX, computerBarEndPositionY];
 			syncVirtalComputerBarArea(computerBarArea);
-			checkComputerBarAreaSync(x, y);
+			checkComputerBarAreaSync(fieldHeight, fieldWidth);
 
 			console.log('Computer bar is ready');
 			console.log('Computer bar area: ' + computerBarArea);
 			console.log('Virtual Computer bar area: ' + virtualComputerBarArea);
 
 			document.addEventListener("keydown", function (event) {
-				movePlayerBar(event.key, x, y)
+				movePlayerBar(event.key, fieldHeight, fieldWidth)
 			});
 
 			document.addEventListener("keydown", function (event) {
 				letsPlay(event.key)
 			});
+
+			setBall(fieldHeight, fieldWidth);
 		}
 
-		let initPong = (x, y) => {
+		let initPong = (fieldHeight, fieldWidth) => {
 			console.log('+++ PRESS ENTER TO START THE GAME +++');
 			console.log('Field dimensions:');
-			console.log('  ' + x + ' Height');
-			console.log('  ' + y + ' Width');
+			console.log('  ' + fieldHeight + ' Height');
+			console.log('  ' + fieldWidth + ' Width');
 			console.log('Ball speed: ' + speed + 'ms');
 
 			let pongField = document.getElementById('pong');
 			let fieldHTML = '';
 
-			for (var i = 0; i <= x; i++) {
+			for (var i = 0; i <= fieldHeight; i++) {
 				fieldHTML += '<tr id="row_' + i + '">';
 
-				for (var z = 0; z <= y; z++) {
+				for (var z = 0; z <= fieldWidth; z++) {
 					fieldHTML += '<td class="cell" id="cell_' + i + '_' + z + '"></td>';
 				}
 
@@ -344,8 +394,7 @@ You just DO WHAT THE FUCK YOU WANT TO.
 
 			pongField.innerHTML = fieldHTML;
 
-			setBars(x, y);
-			setBall(x, y);
+			setBars(fieldHeight, fieldWidth);
 		}
 
 	</script>
@@ -364,7 +413,7 @@ You just DO WHAT THE FUCK YOU WANT TO.
 	</div>
 
 	<script>
-		initPong(15, 30);
+		initPong(fieldHeight, fieldWidth);
 	</script>
 </body>
 
