@@ -18,128 +18,97 @@
 	<title>JS PONG</title>
 	<style>
 
-			html, body{
-				font-family: sans-serif;
-				font-size: 25px;
-				font-weight: 500;
-				background:#000;
-				color: #fff;
-			}
+		html, body{
+			font-family: sans-serif;
+			font-size: 25px;
+			font-weight: 500;
+			background:#000;
+			color: #fff;
+		}
 
-			table{
-				border: 1px solid #fff;
-			}
+		table{
+			border: 1px solid #fff;
+		}
 
-			td.cell{
-				height: 20px;
-				width: 20px;
-				margin: 1, 1, 1, 1;
-				background: #fff;
-				color: #000;
-			}
+		td.cell{
+			height: 20px;
+			width: 20px;
+			margin: 1, 1, 1, 1;
+			background: #fff;
+			color: #000;
+		}
 
-			td.center{
-				height: 20px;
-				width: 20px;
-				margin: 1, 1, 1, 1;
-				background: #000;
-				color: #000;
-			}
+		td.center{
+			height: 20px;
+			width: 20px;
+			margin: 1, 1, 1, 1;
+			background: #000;
+			color: #000;
+		}
 
-			td.ball{
-				height: 20px;
-				width: 20px;
-				margin: 1, 1, 1, 1;
-				background: #ff0066;
-				color: #000;
-			}
+		td.ball{
+			height: 20px;
+			width: 20px;
+			margin: 1, 1, 1, 1;
+			background: #ff0066;
+			color: #000;
+		}
 
-			td{
-				border: 1px solid #000;
-			}
+		td{
+			border: 1px solid #000;
+		}
 
-			td.computerBar, td.playerBar{
-				border: 1px solid #fff;
-			}
+		td.computerBar, td.playerBar{
+			border: 1px solid #fff;
+		}
 
 	</style>
 
 	<script>
-		let fieldHeight = 15;
-		let fieldWidth = 30;
-		let barHeight = 5; // must be uneven for centerpoint
-		let barWidth = 1;
-		let speed = 500; 
-		let x = 0;
-		let y = 0;
 		let playerPoints = 0;
 		let computerPoints = 0;
+		let fieldHeight = 15; 
+		let fieldWidth = (fieldHeight * 2);
+		let barHeight = ((fieldHeight / 3) + 1);
+		let barWidth = 1;
+		let speed = 500; 
 		let ballArea = [0, 0, 0, 0];
-		let virtualBallArea = [0, 0, 0, 0];
-		let ballStartPositionX = 0;
-		let ballStartPositionY = 0;
-		let ballEndPositionX = 0;
-		let ballEndPositionY = 0;
-		let ballMovementPositionX = 0;
-		let ballMovementPositionY = 0;
 		let playerBarArea = [0, 0, 0, 0];
-		let virtualPlayerBarArea = [0, 0, 0, 0];
-		let playerBarStartPositionX = 0;
-		let playerBarStartPositionY = 0;
-		let playerBarEndPositionX = 0;
-		let playerBarEndPositionY = 0;
 		let computerBarArea = [0, 0, 0, 0];
-		let virtualComputerBarArea = [0, 0, 0, 0];
-		let computerBarStartPositionX = 0;
-		let computerBarStartPositionY = 0;
-		let computerBarEndPositionX = 0;
-		let computerBarEndPositionY = 0;
 
-		let isPlayersBar = () => {
-			console.log(ballArea);
-			console.log(playerBarArea);
-
-			if(playerBarArea[0] <= ballArea[0] && playerBarArea[2] >= ballArea[2]){
-				return true;
-			} else {
-				computerPoints++;
-
-				return false;
-			}
-		}
-
-		let moveBallDownLeft = (fieldHeight, fieldWidth) => {
+		let firstBall = (fieldHeight, fieldWidth) => {
 			setTimeout(() => {
-				ballMovementPositionX = ballStartPositionX;
-				ballMovementPositionY = (ballStartPositionY - 1)
-
-				let actual_1_1 = document.getElementById('cell_' + ballMovementPositionX + '_' + ballMovementPositionY);
-				let actual_1_2 = document.getElementById('cell_' + ballMovementPositionX + '_' + (ballMovementPositionY + 1));
-				let actual_2_2 = document.getElementById('cell_' + (ballMovementPositionX + 1) + '_' + (ballMovementPositionY + 1));
-
-				let new_1_1 = document.getElementById('cell_' + (ballMovementPositionX + 2) + '_' + ballMovementPositionY);
-				let new_1_2 = document.getElementById('cell_' + (ballMovementPositionX + 2) + '_' + (ballMovementPositionY - 1));
-				let new_2_2 = document.getElementById('cell_' + (ballMovementPositionX + 1) + '_' + (ballMovementPositionY - 1));
-
-				ballStartPositionX++;
-				ballStartPositionY--;
-				ballEndPositionX++;
-				ballEndPositionY--;
-
-				ballArea = [ballStartPositionX, (ballStartPositionY - 1), ballEndPositionX, (ballEndPositionY - 1)];
-				virtualBallArea = ballArea;
-
-				ballMovementPositionX = ballMovementPositionX - 1;
-				ballMovementPositionY = ballMovementPositionY - 1;
-
+				let actual_1_1 = document.getElementById('cell_' + ballArea[0] + '_' + ballArea[1]);
+				let actual_1_2 = document.getElementById('cell_' + ballArea[0] + '_' + ballArea[3]);
+				let actual_2_1 = document.getElementById('cell_' + ballArea[2] + '_' + ballArea[1]);
+				let actual_2_2 = document.getElementById('cell_' + ballArea[2] + '_' + ballArea[3]);
+				
 				actual_1_1.style.backgroundColor = '#fff';
 				actual_1_1.className = 'cell';
 
 				actual_1_2.style.backgroundColor = '#fff';
 				actual_1_2.className = 'cell';
 
+				actual_2_1.style.backgroundColor = '#fff';
+				actual_2_1.className = 'cell';
+
 				actual_2_2.style.backgroundColor = '#fff';
 				actual_2_2.className = 'cell';
+
+				++ballArea[0];
+				ballArea[1] = (ballArea[1] - 2);
+				++ballArea[2];
+				ballArea[3] = (ballArea[3] - 2);
+				
+				let new_1_1 = document.getElementById('cell_' + ballArea[0] + '_' + ballArea[1]);
+				let new_1_2 = document.getElementById('cell_' + ballArea[0] + '_' + ballArea[3]);
+				let new_2_1 = document.getElementById('cell_' + ballArea[2] + '_' + ballArea[1]);
+				let new_2_2 = document.getElementById('cell_' + ballArea[2] + '_' + ballArea[3]);
+
+				// Hier schauen, ob irgendwas die Klasse playerBar hat...
+				// Dann Funktion um den Ball abzuspielen
+				
+				// Wenn nicht, dann weiter bewegen...
 
 				new_1_1.style.backgroundColor = '#ff0066';
 				new_1_1.className = 'cell ball';
@@ -147,125 +116,23 @@
 				new_1_2.style.backgroundColor = '#ff0066';
 				new_1_2.className = 'cell ball';
 
+				new_2_1.style.backgroundColor = '#ff0066';
+				new_2_1.className = 'cell ball';
+
 				new_2_2.style.backgroundColor = '#ff0066';
 				new_2_2.className = 'cell ball';
 
-				if (ballMovementPositionY === 1) {
-					if(true === isPlayersBar()){
-						// Ball abschießen
-					} else {
-						console.log('Player: ' + playerPoints + ' :: Computer: ' + computerPoints);
-						resetBall();
-						return false;
-					}						
+				if (ballArea[1] > 2) {
+					firstBall(fieldHeight, fieldWidth);
 				} else {
-					if (ballMovementPositionY > 0) {
-						moveBallDownLeft(fieldHeight, fieldWidth);
-					}
+					// Punkt für Computer
 				}
 			}, speed)
 		}
 
-		let letsPlay = (pressedKey) => {
-			if ('Enter' === pressedKey) {
-				console.log('+++ Let\'s play a game with me... +++');
-
-				moveBallDownLeft();
-			}
-		}
-
-		let syncPhysicalPlayerBarArea = (fieldHeight, fieldWidth, upOrDown) => {
-			if('down' === upOrDown){
-				for (var i = 0; i <= fieldHeight; i++){
-					document.getElementById('cell_' + i + '_0').style.backgroundColor = '#fff';
-					document.getElementById('cell_' + i + '_0').className = 'cell';
-				}
-
-				virtualPlayerBarArea = [(virtualPlayerBarArea[0] + 1), virtualPlayerBarArea[1], (virtualPlayerBarArea[2] + 1), virtualPlayerBarArea[3]];
-				playerBarArea = virtualPlayerBarArea;
-
-				for (var i = virtualPlayerBarArea[0]; i <= virtualPlayerBarArea[2]; i++){
-					document.getElementById('cell_' + i + '_0').style.backgroundColor = '#000';
-					document.getElementById('cell_' + i + '_0').className = 'cell playerBar';
-				}
-			} else {
-				for (var i = 0; i <= fieldHeight; i++){
-					document.getElementById('cell_' + i + '_0').style.backgroundColor = '#fff';
-					document.getElementById('cell_' + i + '_0').className = 'cell';
-				}
-
-				virtualPlayerBarArea = [(virtualPlayerBarArea[0] - 1), virtualPlayerBarArea[1], (virtualPlayerBarArea[2] - 1), virtualPlayerBarArea[3]];
-				playerBarArea = virtualPlayerBarArea;
-
-				for (var i = virtualPlayerBarArea[0]; i <= virtualPlayerBarArea[2]; i++){
-					document.getElementById('cell_' + i + '_0').style.backgroundColor = '#000';
-					document.getElementById('cell_' + i + '_0').className = 'cell playerBar';
-				}
-			}
-		}
-
-		let checkPlayerBarAreaSync = () => {
-			if(playerBarArea === virtualPlayerBarArea){
-				console.log('Player bar area is synced');
-			} else {
-				console.log('Player bar area is not synced');
-
-				playerBarArea = virtualPlayerBarArea;
-
-				console.log('Player bar area is synced');
-			}
-		}
-
-		let checkComputerBarAreaSync = () => {
-			if(computerBarArea === virtualComputerBarArea){
-				console.log('Computer bar area is synced');
-			} else {
-				console.log('Computer bar area is not synced');
-
-				computerBarArea = virtualComputerBarArea
-
-				console.log('Computer bar area is synced');
-			}
-		}
-
-		let syncVirtalPlayerBarArea = (newPlayerArea) => {
-			virtualPlayerBarArea = newPlayerArea;
-		}
-
-		let syncVirtalComputerBarArea = (newComputerArea) => {
-			virtualComputerBarArea = newComputerArea;
-		}
-
-		let movePlayerBar = (pressedKey, fieldHeight, fieldWidth) => {
-			let maxTopPosition = 0;
-			let maxBottomPosition = fieldWidth;
-
-			if('ArrowDown' === pressedKey){
-				if(playerBarArea[2] < fieldHeight){
-					console.log('downwards');
-
-					syncPhysicalPlayerBarArea(fieldHeight, fieldWidth, 'down');
-				} else {
-					document.getElementById('cell_' + playerBarArea[2] + '_' + playerBarArea[3]).style.backgroundColor = '#ff0066';
-					setTimeout(() => {document.getElementById('cell_' + playerBarArea[2] + '_' + playerBarArea[3]).style.backgroundColor = '#000';}, 250);
-				}
-			}
-
-			if('ArrowUp' === pressedKey){
-				if(playerBarArea[0] > 0){
-					console.log('upwards');
-
-					syncPhysicalPlayerBarArea(fieldHeight, fieldWidth, 'up');
-				} else {
-					document.getElementById('cell_' + playerBarArea[0] + '_' + playerBarArea[1]).style.backgroundColor = '#ff0066';
-					setTimeout(() => {document.getElementById('cell_' + playerBarArea[0] + '_' + playerBarArea[1]).style.backgroundColor = '#000';}, 250);
-				}
-			}
-		}
-
 		let setBall = (fieldHeight, fieldWidth) => {
-			let ballPositionX = 0;
-			let ballPositionY = ((fieldWidth / 2) - 1);
+			let ballPositionX = 1;
+			let ballPositionY = ((fieldWidth / 2));
 
 			let start_1_1 = document.getElementById('cell_' + ballPositionX + '_' + ballPositionY);
 			let start_1_2 = document.getElementById('cell_' + ballPositionX + '_' + (ballPositionY + 1));
@@ -284,89 +151,80 @@
 			start_2_2.style.backgroundColor = '#ff0066';
 			start_2_2.className = 'cell ball';
 
-			ballStartPositionX = 0;
+			ballStartPositionX = 1;
 			ballStartPositionY = fieldWidth / 2;
-			ballEndPositionX = 1;
+			ballEndPositionX = 2;
 			ballEndPositionY = ((fieldWidth / 2) + 1);
-			ballArea = [ballStartPositionX, ballStartPositionY, ballEndPositionX, ballEndPositionY];
-			virtualBallArea = ballArea;
 
-			console.log('Ball area: ' + ballArea)
+			ballArea = [ballStartPositionX, ballStartPositionY, ballEndPositionX, ballEndPositionY];
 		}
 
-		let resetBall = () => {
-			ballArea = [++ballArea[0], --ballArea[1], ++ballArea[2], --ballArea[3]];
+		let keyHandler = (pressedKey, fieldHeight, fieldWidth) => {
+			let maxTopPosition = 0;
+			let maxBottomPosition = fieldWidth;
 
-			console.log('ballArea: ' + ballArea);
+			if ('Enter' === pressedKey) {
+				// Start a new ball and round
+				console.log('ENTER');
+				firstBall();
+			}
 
-			let act_1_1 = document.getElementById('cell_' + 14 + '_' + 0);
-			let act_1_2 = document.getElementById('cell_' + 14 + '_' + 1);
-			let act_2_1 = document.getElementById('cell_' + 15 + '_' + 0);
-			let act_2_2 = document.getElementById('cell_' + 15 + '_' + 1);
+			if ('ArrowUp' === pressedKey) {
+				if (playerBarArea[0] > 1) {
+					let oldBottom = document.getElementById('cell_' + playerBarArea[2] + '_' + playerBarArea[3]);
 
-			act_1_1.style.backgroundColor = '#fff';
-			act_1_1.className = 'cell';
+					oldBottom.style.backgroundColor = '#fff';
+					oldBottom.className = 'cell';
 
-			act_1_2.style.backgroundColor = '#fff';
-			act_1_2.className = 'cell';
+					playerBarArea = [--playerBarArea[0], playerBarArea[1], --playerBarArea[2], playerBarArea[3]];
 
-			act_2_1.style.backgroundColor = '#fff';
-			act_2_1.className = 'cell';
+					let newTop = document.getElementById('cell_' + playerBarArea[0] + '_' + playerBarArea[1]);
 
-			act_2_2.style.backgroundColor = '#fff';
-			act_2_2.className = 'cell';
+					newTop.style.backgroundColor = '#000';
+					newTop.className = 'cell playerBar';
+				} else {
+					document.getElementById('cell_' + playerBarArea[0] + '_' + playerBarArea[1]).style.backgroundColor = '#ff0066';
+					setTimeout(() => { document.getElementById('cell_' + playerBarArea[0] + '_' + playerBarArea[1]).style.backgroundColor = '#000'; }, 250);
+				}
+			}
 
-			
+			if ('ArrowDown' === pressedKey) {
+				if (playerBarArea[2] < fieldHeight) {
+					let oldTop = document.getElementById('cell_' + playerBarArea[0] + '_' + playerBarArea[1]);
+					
+					oldTop.style.backgroundColor = '#fff';
+					oldTop.className = 'cell';
+		
+					playerBarArea = [++playerBarArea[0], playerBarArea[1], ++playerBarArea[2], playerBarArea[3]];
+					
+					let newBottom = document.getElementById('cell_' + playerBarArea[2] + '_' + playerBarArea[3]);
+
+					newBottom.style.backgroundColor = '#000';
+					newBottom.className = 'cell playerBar';
+				} else {
+					document.getElementById('cell_' + playerBarArea[2] + '_' + playerBarArea[3]).style.backgroundColor = '#ff0066';
+					setTimeout(() => { document.getElementById('cell_' + playerBarArea[2] + '_' + playerBarArea[3]).style.backgroundColor = '#000'; }, 250);
+				}
+			}
 		}
 
 		let setBars = (fieldHeight, fieldWidth) => {
-			var playerBarArea = null;
-			var computerBarArea = null;
-
-			console.log('Bar dimensions:');
-			console.log('  ' + barHeight + ' Bar height');
-			console.log('  ' + barWidth + ' Bar width');
-
-			for (var i = 0; i < barHeight; i++){
-				document.getElementById('cell_' + i + '_0').style.backgroundColor = '#000';
-				document.getElementById('cell_' + i + '_0').className = 'cell playerBar';
+			for (var i = 1; i < barHeight; i++) {
+				document.getElementById('cell_' + i + '_1').style.backgroundColor = '#000';
+				document.getElementById('cell_' + i + '_1').className = 'cell playerBar';
 			}
 
-			playerBarStartPositionX = 0;
-			playerBarStartPositionY = 0;
-			playerBarEndPositionX = barHeight;
-			playerBarEndPositionY = 0;
-			playerBarArea = [playerBarStartPositionX, playerBarStartPositionY, playerBarEndPositionX, playerBarEndPositionY];
-			syncVirtalPlayerBarArea(playerBarArea);
-			checkPlayerBarAreaSync(fieldHeight, fieldWidth);
+			playerBarArea = [1, 1, (barHeight - 1), 1];
 
-			console.log('Player bar is ready');
-			console.log('Player bar area: ' + playerBarArea);
-			console.log('Virtual Player bar area: ' + virtualPlayerBarArea);
-
-			for (var i = 0; i < barHeight; i++){
-				document.getElementById('cell_' + i + '_' + y).style.backgroundColor = '#000';
-				document.getElementById('cell_' + i + '_' + y).className = 'cell computerBar';
+			for (var i = 1; i < barHeight; i++) {
+				document.getElementById('cell_' + i + '_' + fieldWidth).style.backgroundColor = '#000';
+				document.getElementById('cell_' + i + '_' + fieldWidth).className = 'cell computerBar';
 			}
 
-			computerBarStartPositionX = 0;
-			computerBarStartPositionY = fieldWidth;
-			computerBarEndPositionX = barHeight;
-			computerBarEndPositionY = fieldWidth;
-			computerBarArea = [computerBarStartPositionX, computerBarStartPositionY, computerBarEndPositionX, computerBarEndPositionY];
-			syncVirtalComputerBarArea(computerBarArea);
-			checkComputerBarAreaSync(fieldHeight, fieldWidth);
+			computerBarArea = [1, fieldWidth, barHeight, fieldWidth];
 
-			console.log('Computer bar is ready');
-			console.log('Computer bar area: ' + computerBarArea);
-			console.log('Virtual Computer bar area: ' + virtualComputerBarArea);
-
-			document.addEventListener("keydown", function (event) {
-				movePlayerBar(event.key, fieldHeight, fieldWidth)
-			});
-
-			document.addEventListener("keydown", function (event) {
-				letsPlay(event.key)
+			document.addEventListener("keyup", function (event) {
+				keyHandler(event.key, fieldHeight, fieldWidth)
 			});
 
 			setBall(fieldHeight, fieldWidth);
@@ -374,18 +232,14 @@
 
 		let initPong = (fieldHeight, fieldWidth) => {
 			console.log('+++ PRESS ENTER TO START THE GAME +++');
-			console.log('Field dimensions:');
-			console.log('  ' + fieldHeight + ' Height');
-			console.log('  ' + fieldWidth + ' Width');
-			console.log('Ball speed: ' + speed + 'ms');
 
 			let pongField = document.getElementById('pong');
 			let fieldHTML = '';
 
-			for (var i = 0; i <= fieldHeight; i++) {
+			for (var i = 1; i <= fieldHeight; i++) {
 				fieldHTML += '<tr id="row_' + i + '">';
 
-				for (var z = 0; z <= fieldWidth; z++) {
+				for (var z = 1; z <= fieldWidth; z++) {
 					fieldHTML += '<td class="cell" id="cell_' + i + '_' + z + '"></td>';
 				}
 
