@@ -69,12 +69,46 @@
 		let computerPoints = 0;
 		let fieldHeight = 15; 
 		let fieldWidth = (fieldHeight * 2);
-		let barHeight = ((fieldHeight / 3) + 1);
+		let barHeight = ((fieldHeight / 3) + 2);
 		let barWidth = 1;
 		let speed = 500; 
 		let ballArea = [0, 0, 0, 0];
 		let playerBarArea = [0, 0, 0, 0];
 		let computerBarArea = [0, 0, 0, 0];
+
+		let computerPoint = () => {
+
+		}
+
+		let playerPoint = () => {
+
+		}
+
+		let setPoints = (what) => {
+			if('computer' === what){
+				++computerPoints;
+				console.log('Points: ' + playerPoints + ' - ' + computerPoints);
+			}
+
+			if('player' === what){
+				++playerPoints;
+				console.log('Points: ' + playerPoints + ' - ' + computerPoints);
+			}
+		}
+
+		let ball = (direction) => {
+			if ('up' === direction) {
+
+			}
+
+			if ('down' === direction) {
+
+			}
+
+			if ('linear' === direction) {
+
+			}
+		}
 
 		let firstBall = (fieldHeight, fieldWidth) => {
 			setTimeout(() => {
@@ -85,13 +119,10 @@
 				
 				actual_1_1.style.backgroundColor = '#fff';
 				actual_1_1.className = 'cell';
-
 				actual_1_2.style.backgroundColor = '#fff';
 				actual_1_2.className = 'cell';
-
 				actual_2_1.style.backgroundColor = '#fff';
 				actual_2_1.className = 'cell';
-
 				actual_2_2.style.backgroundColor = '#fff';
 				actual_2_2.className = 'cell';
 
@@ -105,27 +136,44 @@
 				let new_2_1 = document.getElementById('cell_' + ballArea[2] + '_' + ballArea[1]);
 				let new_2_2 = document.getElementById('cell_' + ballArea[2] + '_' + ballArea[3]);
 
-				// Hier schauen, ob irgendwas die Klasse playerBar hat...
-				// Dann Funktion um den Ball abzuspielen
-				
-				// Wenn nicht, dann weiter bewegen...
+				let playerBarMarker = 'cell playerBar';
 
-				new_1_1.style.backgroundColor = '#ff0066';
-				new_1_1.className = 'cell ball';
-
-				new_1_2.style.backgroundColor = '#ff0066';
-				new_1_2.className = 'cell ball';
-
-				new_2_1.style.backgroundColor = '#ff0066';
-				new_2_1.className = 'cell ball';
-
-				new_2_2.style.backgroundColor = '#ff0066';
-				new_2_2.className = 'cell ball';
-
-				if (ballArea[1] > 2) {
-					firstBall(fieldHeight, fieldWidth);
+				if(
+					playerBarMarker === new_1_1.className ||
+					playerBarMarker === new_1_2.className ||
+					playerBarMarker === new_2_1.className ||
+					playerBarMarker === new_2_2.className
+				) {
+					if(
+						playerBarArea[0] === ballArea[2] || 
+						playerBarArea[0] === ballArea[0] || 
+						(playerBarArea[0] + 1)  === ballArea[0]
+					){
+						ball('up');
+					} else if (
+						playerBarArea[2] === ballArea[0] || 
+						playerBarArea[2] === (ballArea[2] + 1) || 
+						playerBarArea[2] === ballArea[2]
+					) {
+						ball('down');
+					} else {
+						ball('linear');
+					}
 				} else {
-					// Punkt für Computer
+					new_1_1.style.backgroundColor = '#ff0066';
+					new_1_1.className = 'cell ball';
+					new_1_2.style.backgroundColor = '#ff0066';
+					new_1_2.className = 'cell ball';
+					new_2_1.style.backgroundColor = '#ff0066';
+					new_2_1.className = 'cell ball';
+					new_2_2.style.backgroundColor = '#ff0066';
+					new_2_2.className = 'cell ball';
+
+					if (ballArea[1] > 2) {
+						firstBall(fieldHeight, fieldWidth);
+					} else {
+						setPoints('computer');
+					}
 				}
 			}, speed)
 		}
@@ -141,13 +189,10 @@
 			
 			start_1_1.style.backgroundColor = '#ff0066';
 			start_1_1.className = 'cell ball';
-
 			start_1_2.style.backgroundColor = '#ff0066';
 			start_1_2.className = 'cell ball';
-			
 			start_2_1.style.backgroundColor = '#ff0066';
 			start_2_1.className = 'cell ball';
-			
 			start_2_2.style.backgroundColor = '#ff0066';
 			start_2_2.className = 'cell ball';
 
@@ -165,7 +210,6 @@
 
 			if ('Enter' === pressedKey) {
 				// Start a new ball and round
-				console.log('ENTER');
 				firstBall();
 			}
 
@@ -257,15 +301,21 @@
 
 <body>
 	<div class="container">
-			<center>
+		<center>
 			<p>JS Pong</p>
 			<table id="pong">
 				<tbody>
 				</tbody>
 			</table>
+
+			<div>
+				<br>
+				Points
+				<br><small>ENTER to start a new Game.</small>
+				<small>Arrow up and arrow down to move the player bar.</small>
+			</div>
 		</center>
 	</div>
-
 	<script>
 		initPong(fieldHeight, fieldWidth);
 	</script>
